@@ -174,8 +174,41 @@ st.dataframe(
 )
 
 
+# # =========================
+# # Grafik Ranking
+# # =========================
+
+# # Urutkan sesuai pilihan ranking
+# if ascending:
+#     df_plot = leaderboard.sort_values(by=sort_col, ascending=True)
+# else:
+#     df_plot = leaderboard.sort_values(by=sort_col, ascending=False)
+
+# df_plot = df_plot[::-1]
+
+# fig = px.bar(
+#     df_plot,
+#     x=sort_col,
+#     y="nama",
+#     title=f"📊 Top {top_n} berdasarkan {ranking_mode}",
+#     text=sort_col,
+#     orientation="h"
+# )
+
+# fig.update_traces(textposition="outside")
+
+# fig.update_layout(
+#     yaxis=dict(
+#         categoryorder="array",
+#         categoryarray=df_plot["nama"].tolist()
+#     )
+# )
+
+# st.plotly_chart(fig, use_container_width=True)
+
+
 # =========================
-# Grafik Ranking
+# Grafik Ranking (Gradasi Hijau)
 # =========================
 
 # Urutkan sesuai pilihan ranking
@@ -184,7 +217,7 @@ if ascending:
 else:
     df_plot = leaderboard.sort_values(by=sort_col, ascending=False)
 
-df_plot = df_plot[::-1]
+df_plot = df_plot[::-1]  # Biar ranking atas muncul di atas
 
 fig = px.bar(
     df_plot,
@@ -192,19 +225,26 @@ fig = px.bar(
     y="nama",
     title=f"📊 Top {top_n} berdasarkan {ranking_mode}",
     text=sort_col,
-    orientation="h"
+    orientation="h",
+    color=sort_col,  # kasih warna sesuai nilai ranking
+    color_continuous_scale="Greens",  # gradasi hijau
 )
 
-fig.update_traces(textposition="outside")
+fig.update_traces(
+    textposition="outside",
+    marker=dict(line=dict(width=0))  # biar clean
+)
 
 fig.update_layout(
     yaxis=dict(
         categoryorder="array",
         categoryarray=df_plot["nama"].tolist()
-    )
+    ),
+    coloraxis_showscale=False  # sembunyikan legend skala warna kalau mau
 )
 
 st.plotly_chart(fig, use_container_width=True)
+
 
 # =========================
 # Tren Mingguan
