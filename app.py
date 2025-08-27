@@ -9,8 +9,15 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 
-st.set_page_config(page_title="KDM Dashboard", layout="wide")
 
+st.set_page_config(
+    page_title="Dashboard KDM",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+st.write(f"📅 Data terakhir diperbarui pada: Senin, 25 Agustus 2025, pukul 08:00")
 st.title("📊 Dashboard KDM BPS Kota Mojokerto - Sensus Ekonomi 2026")
 
 # Load Data---
@@ -76,20 +83,21 @@ total_all = int(df["total"].sum())
 total_terbaru = int(df["terbaru"].sum())
 total_week = int(df["perolehan minggu ini"].sum())
 
-col1, col2, col3, col4, col5, col6 = st.columns(6)
-
+col1, col2, col3 = st.columns(3)
 with col1:
     st.metric("📍 Total Tagging Sampai Minggu Lalu", f"{df['total'].sum():,}")
 with col2:
     st.metric("🆕 Total Tagging Terbaru", f"{total_terbaru:,}")
 with col3:
     st.metric("📅 Total Minggu Ini", f"{total_week:,}")
+
+col4, col5, col6 = st.columns(3)
 with col4:
-    st.metric("👥 Rata-rata per Pegawai", f"{df['total'].mean():,.2f}")
+    st.metric("👥 Rata-rata per Pegawai", f"{df['terbaru'].mean():,.2f}")
 with col5:
-    st.metric("🏆 Max Tagging", f"{df['total'].max():,}")
+    st.metric("🏆 Max Tagging", f"{df['terbaru'].max():,}")
 with col6:
-    st.metric("📉 Min Tagging", f"{df['total'].min():,}")
+    st.metric("📉 Min Tagging", f"{df['terbaru'].min():,}")
 
 # =========================
 # Filter Rentang Tanggal
