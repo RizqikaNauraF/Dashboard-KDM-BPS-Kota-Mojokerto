@@ -70,9 +70,33 @@ if missing_cols:
     st.error(f"❌ Kolom berikut tidak ada di file: {missing_cols}")
     st.stop()
 
-# Konversi tanggal 
+# =========================
+# Konversi & Pilih Tanggal (pakai selectbox, tanpa waktu)
+# =========================
 if "tanggal" in df.columns:
-    df["tanggal"] = pd.to_datetime(df["tanggal"], errors="coerce")
+    df["tanggal"] = pd.to_datetime(df["tanggal"], dayfirst=True, errors="coerce")
+
+    if df["tanggal"].notna().any():
+        # Ambil tanggal unik (tanpa jam) dan urutkan
+        available_dates = sorted(df["tanggal"].dt.date.unique())
+
+        # Default: 25 Agustus 2025 kalau ada, kalau tidak pakai yang pertama
+        default_date = datetime.strptime("25/08/2025", "%d/%m/%Y").date()
+        if default_date not in available_dates:
+            default_date = available_dates[0]
+
+        # Selectbox pilih tanggal (tampilkan format dd-mm-YYYY)
+        selected_date_str = st.selectbox(
+            "📅 Pilih tanggal:",
+            options=[d.strftime("%d-%m-%Y") for d in available_dates],
+            index=available_dates.index(default_date)
+        )
+
+        # Konversi kembali ke tipe date
+        selected_date = datetime.strptime(selected_date_str, "%d-%m-%Y").date()
+
+        # Filter dataframe sesuai tanggal dipilih
+        df = df[df["tanggal"].dt.date == selected_date]
 
 # =========================
 # Statistik Ringkas
@@ -99,20 +123,6 @@ with col5:
 with col6:
     st.metric("📉 Min Tagging", f"{df['terbaru'].min():,}")
 
-# =========================
-# Filter Rentang Tanggal
-# =========================
-if "tanggal" in df.columns and df["tanggal"].notna().any():
-    min_date = df["tanggal"].min()
-    max_date = df["tanggal"].max()
-    start_date, end_date = st.date_input(
-        "📅 Pilih rentang tanggal:",
-        value=[min_date, max_date],
-        min_value=min_date,
-        max_value=max_date,
-    )
-    df = df[(df["tanggal"] >= pd.to_datetime(start_date)) &
-            (df["tanggal"] <= pd.to_datetime(end_date))]
 
 # =========================
 # Search Nama
@@ -180,39 +190,6 @@ st.dataframe(
     use_container_width=True,
     hide_index=True
 )
-
-
-# # =========================
-# # Grafik Ranking
-# # =========================
-
-# # Urutkan sesuai pilihan ranking
-# if ascending:
-#     df_plot = leaderboard.sort_values(by=sort_col, ascending=True)
-# else:
-#     df_plot = leaderboard.sort_values(by=sort_col, ascending=False)
-
-# df_plot = df_plot[::-1]
-
-# fig = px.bar(
-#     df_plot,
-#     x=sort_col,
-#     y="nama",
-#     title=f"📊 Top {top_n} berdasarkan {ranking_mode}",
-#     text=sort_col,
-#     orientation="h"
-# )
-
-# fig.update_traces(textposition="outside")
-
-# fig.update_layout(
-#     yaxis=dict(
-#         categoryorder="array",
-#         categoryarray=df_plot["nama"].tolist()
-#     )
-# )
-
-# st.plotly_chart(fig, use_container_width=True)
 
 
 # =========================
