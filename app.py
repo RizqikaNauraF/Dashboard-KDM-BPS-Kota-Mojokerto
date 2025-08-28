@@ -20,7 +20,7 @@ st.set_page_config(
 st.write(f"📅 Data terakhir diperbarui pada: Senin, 25 Agustus 2025, pukul 08:00")
 st.title("📊 Dashboard KDM BPS Kota Mojokerto - Sensus Ekonomi 2026")
 
-# Load Data---
+# --Load Data---
 @st.cache_data
 def load_data(file):
     df = pd.read_excel(file, engine="openpyxl")
@@ -150,7 +150,7 @@ else:
 st.subheader("🏆 Leaderboard Pegawai")
 
 # Pilihan berapa top
-top_n = st.slider("Pilih jumlah Top-N:", 5, 30, 10)
+top_n = st.slider("Pilih jumlah Top-N:", 5, 30, 17)
 ascending = st.checkbox("⬆️ Urutkan dari terkecil", value=False)
 
 # Hitung agregasi
@@ -231,17 +231,76 @@ fig.update_layout(
 st.plotly_chart(fig, use_container_width=True)
 
 
+# # =========================
+# # Tren Mingguan
+# # =========================
+# if "tanggal" in df.columns:
+#     st.subheader("📅 Tren Mingguan")
+#     trend_metric = st.selectbox("Pilih metrik tren:", ["total", "terbaru", "perolehan minggu ini"])
+#     trend = df.groupby("tanggal", as_index=False)[trend_metric].sum()
+#     fig_trend = px.line(trend, x="tanggal", y=trend_metric, 
+#                         title=f"Tren {trend_metric} dari waktu ke waktu",
+#                         markers=True)
+#     st.plotly_chart(fig_trend, use_container_width=True)
+
+
 # =========================
-# Tren Mingguan
+# 📊 Perbandingan dengan File Baru
 # =========================
-if "tanggal" in df.columns:
-    st.subheader("📅 Tren Mingguan")
-    trend_metric = st.selectbox("Pilih metrik tren:", ["total", "terbaru", "perolehan minggu ini"])
-    trend = df.groupby("tanggal", as_index=False)[trend_metric].sum()
-    fig_trend = px.line(trend, x="tanggal", y=trend_metric, 
-                        title=f"Tren {trend_metric} dari waktu ke waktu",
-                        markers=True)
-    st.plotly_chart(fig_trend, use_container_width=True)
+st.subheader("📊 Perbandingan dengan Data Tanggal 15 Agustus 2025")
+
+try:
+    df_new = pd.read_excel("KDM_15-8.xlsx", engine="openpyxl")
+    df_new.columns = df_new.columns.str.strip().str.lower()
+
+    if "nama" in df_new.columns and "total" in df_new.columns:
+        df_compare = df.merge(
+            df_new[["nama", "total"]],
+            on="nama",
+            how="left",
+            suffixes=("", "_15")
+        )
+
+        # Hitung selisih (Total Terbaru - Total Tanggal 15)
+        df_compare["selisih"] = df_compare["terbaru"] - df_compare["total"]
+        
+        # Rename kolom biar rapi
+        df_show = df_compare.rename(
+            columns={
+                "total": "Total Tanggal 15",
+                "terbaru": "Total Terbaru",
+                "nama": "Nama",
+                "satker": "Satker",
+                "selisih": "Selisih"
+            }
+        )[
+            ["Nama", "Satker", "Total Terbaru", "Total Tanggal 15", "Selisih"]
+        ]
+
+        # Pilihan urutan
+        order = st.radio(
+            "Urutkan berdasarkan Selisih:",
+            ["Terbesar ke Terkecil", "Terkecil ke Terbesar"],
+            horizontal=True
+        )
+
+        ascending = True if order == "Terkecil ke Terbesar" else False
+
+        # Urutkan berdasarkan Selisih
+        df_show = df_show.sort_values(by="Selisih", ascending=ascending)
+
+        # Tambahkan Ranking berdasarkan urutan selisih
+        df_show.insert(0, "Ranking", range(1, len(df_show) + 1))
+
+        # Reset index supaya angka di samping hilang
+        df_show = df_show.reset_index(drop=True)
+
+        st.dataframe(df_show, use_container_width=True, hide_index=True)
+
+    else:
+        st.warning("⚠️ File KDM_15-8.xlsx tidak memiliki kolom 'nama' dan 'total'.")
+except FileNotFoundError:
+    st.info("📂 File 'KDM_15-8.xlsx' belum ditemukan di folder. Upload dulu untuk perbandingan.")
 
 # =========================
 # Export Data
