@@ -17,7 +17,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-st.write(f"📅 Data terakhir diperbarui pada: Senin, 25 Agustus 2025, pukul 08:00")
+st.write(f"📅 Data terakhir diperbarui pada: Senin, 1 September 2025, pukul 05.00")
 st.title("📊 Dashboard KDM BPS Kota Mojokerto - Sensus Ekonomi 2026")
 
 # --Load Data---
@@ -80,8 +80,8 @@ if "tanggal" in df.columns:
         # Ambil tanggal unik (tanpa jam) dan urutkan
         available_dates = sorted(df["tanggal"].dt.date.unique())
 
-        # Default: 25 Agustus 2025 kalau ada, kalau tidak pakai yang pertama
-        default_date = datetime.strptime("25/08/2025", "%d/%m/%Y").date()
+        # DEFAULT TANGGAL
+        default_date = datetime.strptime("01/09/2025", "%d/%m/%Y").date()
         if default_date not in available_dates:
             default_date = available_dates[0]
 
@@ -244,33 +244,98 @@ st.plotly_chart(fig, use_container_width=True)
 #     st.plotly_chart(fig_trend, use_container_width=True)
 
 
+# # =========================
+# # 📊 Perbandingan dengan File Baru
+# # =========================
+# st.subheader("📊 Perbandingan dengan Data Tanggal 15 Agustus 2025")
+
+# try:
+#     df_new = pd.read_excel("KDM_15-8.xlsx", engine="openpyxl")
+#     df_new.columns = df_new.columns.str.strip().str.lower()
+
+#     if "nama" in df_new.columns and "total" in df_new.columns:
+#         df_compare = df.merge(
+#             df_new[["nama", "total"]],
+#             on="nama",
+#             how="left",
+#             suffixes=("", "_15")
+#         )
+
+#         # Hitung selisih (Total Terbaru - Total Tanggal 15)
+#         df_compare["selisih"] = df_compare["terbaru"] - df_compare["total"]
+        
+#         # Rename kolom biar rapi
+#         df_show = df_compare.rename(
+#             columns={
+#                 "total": "Total Tanggal 15",
+#                 "terbaru": "Total Terbaru",
+#                 "nama": "Nama",
+#                 "satker": "Satker",
+#                 "selisih": "Selisih"
+#             }
+#         )[
+#             ["Nama", "Satker", "Total Terbaru", "Total Tanggal 15", "Selisih"]
+#         ]
+
+#         # Pilihan urutan
+#         order = st.radio(
+#             "Urutkan berdasarkan Selisih:",
+#             ["Terbesar ke Terkecil", "Terkecil ke Terbesar"],
+#             horizontal=True
+#         )
+
+#         ascending = True if order == "Terkecil ke Terbesar" else False
+
+#         # Urutkan berdasarkan Selisih
+#         df_show = df_show.sort_values(by="Selisih", ascending=ascending)
+
+#         # Tambahkan Ranking berdasarkan urutan selisih
+#         df_show.insert(0, "Ranking", range(1, len(df_show) + 1))
+
+#         # Reset index supaya angka di samping hilang
+#         df_show = df_show.reset_index(drop=True)
+
+#         st.dataframe(df_show, use_container_width=True, hide_index=True)
+
+#     else:
+#         st.warning("⚠️ File KDM_15-8.xlsx tidak memiliki kolom 'nama' dan 'total'.")
+# except FileNotFoundError:
+#     st.info("📂 File 'KDM_15-8.xlsx' belum ditemukan di folder. Upload dulu untuk perbandingan.")
+
 # =========================
 # 📊 Perbandingan dengan File Baru
 # =========================
 st.subheader("📊 Perbandingan dengan Data Tanggal 15 Agustus 2025")
 
 try:
+    # Baca file Excel
     df_new = pd.read_excel("KDM_15-8.xlsx", engine="openpyxl")
     df_new.columns = df_new.columns.str.strip().str.lower()
 
+    # Pastikan kolom yang dibutuhkan ada
     if "nama" in df_new.columns and "total" in df_new.columns:
-        df_compare = df.merge(
+
+        # Pastikan numeric
+        df_new["total"] = pd.to_numeric(df_new["total"], errors="coerce")
+        df["terbaru"] = pd.to_numeric(df["terbaru"], errors="coerce")
+
+        # Ambil hanya kolom yang diperlukan lalu merge
+        df_compare = df[["nama", "satker", "terbaru"]].merge(
             df_new[["nama", "total"]],
             on="nama",
-            how="left",
-            suffixes=("", "_15")
+            how="left"
         )
 
-        # Hitung selisih (Total Terbaru - Total Tanggal 15)
+        # Hitung selisih
         df_compare["selisih"] = df_compare["terbaru"] - df_compare["total"]
-        
+
         # Rename kolom biar rapi
         df_show = df_compare.rename(
             columns={
-                "total": "Total Tanggal 15",
-                "terbaru": "Total Terbaru",
                 "nama": "Nama",
                 "satker": "Satker",
+                "terbaru": "Total Terbaru",
+                "total": "Total Tanggal 15",
                 "selisih": "Selisih"
             }
         )[
@@ -283,24 +348,22 @@ try:
             ["Terbesar ke Terkecil", "Terkecil ke Terbesar"],
             horizontal=True
         )
-
         ascending = True if order == "Terkecil ke Terbesar" else False
 
-        # Urutkan berdasarkan Selisih
+        # Urutkan & ranking
         df_show = df_show.sort_values(by="Selisih", ascending=ascending)
-
-        # Tambahkan Ranking berdasarkan urutan selisih
         df_show.insert(0, "Ranking", range(1, len(df_show) + 1))
-
-        # Reset index supaya angka di samping hilang
         df_show = df_show.reset_index(drop=True)
 
+        # Tampilkan tabel
         st.dataframe(df_show, use_container_width=True, hide_index=True)
 
     else:
         st.warning("⚠️ File KDM_15-8.xlsx tidak memiliki kolom 'nama' dan 'total'.")
 except FileNotFoundError:
     st.info("📂 File 'KDM_15-8.xlsx' belum ditemukan di folder. Upload dulu untuk perbandingan.")
+
+
 
 # =========================
 # Export Data
