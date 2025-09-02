@@ -138,39 +138,74 @@ total_all = int(df["total"].sum())
 total_terbaru = int(df["terbaru"].sum())
 total_week = int(df["perolehan minggu ini"].sum())
 
-st.markdown("""
-<div style="display:flex; gap:20px; margin-bottom:20px;">
-    <div style="flex:1; background:#2ECC71; padding:20px; border-radius:12px; color:white; text-align:center;">
-        <h4>📍 Total Tagging Sampai Minggu Lalu</h4>
-        <p style="font-size:22px; font-weight:bold;">{:,}</p>
-    </div>
-    <div style="flex:1; background:#3498DB; padding:20px; border-radius:12px; color:white; text-align:center;">
-        <h4>🆕 Total Tagging Terbaru</h4>
-        <p style="font-size:22px; font-weight:bold;">{:,}</p>
-    </div>
-    <div style="flex:1; background:#E67E22; padding:20px; border-radius:12px; color:white; text-align:center;">
-        <h4>📅 Total Minggu Ini</h4>
-        <p style="font-size:22px; font-weight:bold;">{:,}</p>
-    </div>
-</div>
-""".format(df['total'].sum(), total_terbaru, total_week), unsafe_allow_html=True)
+# st.markdown("""
+# <div style="display:flex; gap:20px; margin-bottom:20px;">
+#     <div style="flex:1; background:#2ECC71; padding:20px; border-radius:12px; color:white; text-align:center;">
+#         <h4>📍 Total Tagging Sampai Minggu Lalu</h4>
+#         <p style="font-size:22px; font-weight:bold;">{:,}</p>
+#     </div>
+#     <div style="flex:1; background:#3498DB; padding:20px; border-radius:12px; color:white; text-align:center;">
+#         <h4>🆕 Total Tagging Terbaru</h4>
+#         <p style="font-size:22px; font-weight:bold;">{:,}</p>
+#     </div>
+#     <div style="flex:1; background:#E67E22; padding:20px; border-radius:12px; color:white; text-align:center;">
+#         <h4>📅 Total Minggu Ini</h4>
+#         <p style="font-size:22px; font-weight:bold;">{:,}</p>
+#     </div>
+# </div>
+# """.format(df['total'].sum(), total_terbaru, total_week), unsafe_allow_html=True)
 
-st.markdown("""
-<div style="display:flex; gap:20px;">
-    <div style="flex:1; background:#9B59B6; padding:20px; border-radius:12px; color:white; text-align:center;">
-        <h4>👥 Rata-rata per Pegawai</h4>
-        <p style="font-size:22px; font-weight:bold;">{:.2f}</p>
+# st.markdown("""
+# <div style="display:flex; gap:20px;">
+#     <div style="flex:1; background:#9B59B6; padding:20px; border-radius:12px; color:white; text-align:center;">
+#         <h4>👥 Rata-rata per Pegawai</h4>
+#         <p style="font-size:22px; font-weight:bold;">{:.2f}</p>
+#     </div>
+#     <div style="flex:1; background:#1ABC9C; padding:20px; border-radius:12px; color:white; text-align:center;">
+#         <h4>🏆 Max Tagging</h4>
+#         <p style="font-size:22px; font-weight:bold;">{:,}</p>
+#     </div>
+#     <div style="flex:1; background:#E74C3C; padding:20px; border-radius:12px; color:white; text-align:center;">
+#         <h4>📉 Min Tagging</h4>
+#         <p style="font-size:22px; font-weight:bold;">{:,}</p>
+#     </div>
+# </div>
+# """.format(df['terbaru'].mean(), df['terbaru'].max(), df['terbaru'].min()), unsafe_allow_html=True)
+
+st.markdown(f"""
+<div style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:20px;">
+    <div style="flex:1 1 200px; background:#2ECC71; padding:20px; border-radius:12px; color:white; text-align:center;">
+        <h4>📍 Total Tagging Sampai Minggu Lalu</h4>
+        <p style="font-size:22px; font-weight:bold;">{total_all:,}</p>
     </div>
-    <div style="flex:1; background:#1ABC9C; padding:20px; border-radius:12px; color:white; text-align:center;">
-        <h4>🏆 Max Tagging</h4>
-        <p style="font-size:22px; font-weight:bold;">{:,}</p>
+    <div style="flex:1 1 200px; background:#3498DB; padding:20px; border-radius:12px; color:white; text-align:center;">
+        <h4>🆕 Total Tagging Terbaru</h4>
+        <p style="font-size:22px; font-weight:bold;">{total_terbaru:,}</p>
     </div>
-    <div style="flex:1; background:#E74C3C; padding:20px; border-radius:12px; color:white; text-align:center;">
-        <h4>📉 Min Tagging</h4>
-        <p style="font-size:22px; font-weight:bold;">{:,}</p>
+    <div style="flex:1 1 200px; background:#E67E22; padding:20px; border-radius:12px; color:white; text-align:center;">
+        <h4>📅 Total Minggu Ini</h4>
+        <p style="font-size:22px; font-weight:bold;">{total_week:,}</p>
     </div>
 </div>
-""".format(df['terbaru'].mean(), df['terbaru'].max(), df['terbaru'].min()), unsafe_allow_html=True)
+""", unsafe_allow_html=True)
+
+st.markdown(f"""
+<div style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:20px;">
+    <div style="flex:1 1 200px; background:#9B59B6; padding:20px; border-radius:12px; color:white; text-align:center;">
+        <h4>👥 Rata-rata per Pegawai</h4>
+        <p style="font-size:22px; font-weight:bold;">{df['terbaru'].mean():.2f}</p>
+    </div>
+    <div style="flex:1 1 200px; background:#1ABC9C; padding:20px; border-radius:12px; color:white; text-align:center;">
+        <h4>🏆 Max Tagging</h4>
+        <p style="font-size:22px; font-weight:bold;">{df['terbaru'].max():,}</p>
+    </div>
+    <div style="flex:1 1 200px; background:#E74C3C; padding:20px; border-radius:12px; color:white; text-align:center;">
+        <h4>📉 Min Tagging</h4>
+        <p style="font-size:22px; font-weight:bold;">{df['terbaru'].min():,}</p>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
 
 st.markdown("---")
 
