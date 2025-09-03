@@ -13,6 +13,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 st.set_page_config(
     page_title="Dashboard KDM",
     page_icon="📊",
+    layout="wide",
     initial_sidebar_state="expanded"
 )
 
@@ -49,7 +50,6 @@ if source is None:
 # Load data
 def load_data(file_path):
     return pd.read_excel(file_path)
-
 try:
     df = load_data(source)
 except Exception as e:
