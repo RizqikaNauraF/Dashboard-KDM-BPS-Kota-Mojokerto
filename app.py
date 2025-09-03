@@ -61,12 +61,12 @@ st.sidebar.markdown("---")
 st.sidebar.subheader("📊 Pilih Data")
 filter_option = st.sidebar.radio(
     "Pilih Data:",
-    ("Semua", "Pegawai", "Non Pegawai")
+    ("Semua (Pegawai & Non Pegawai)", "Pegawai", "Non Pegawai")
 )
 
 # --- Load Data Sesuai Filter ---
 try:
-    if filter_option == "Semua":
+    if filter_option == "Semua (Pegawai & Non Pegawai)":
         df = pd.read_excel(source, sheet_name="Semua")
     elif filter_option == "Pegawai":
         df = pd.read_excel(source, sheet_name="Pegawai")
@@ -144,40 +144,6 @@ st.subheader("📌 Statistik Ringkas")
 total_all = int(df["total"].sum())
 total_terbaru = int(df["terbaru"].sum())
 total_week = int(df["perolehan minggu ini"].sum())
-
-# st.markdown("""
-# <div style="display:flex; gap:20px; margin-bottom:20px;">
-#     <div style="flex:1; background:#2ECC71; padding:20px; border-radius:12px; color:white; text-align:center;">
-#         <h4>📍 Total Tagging Sampai Minggu Lalu</h4>
-#         <p style="font-size:22px; font-weight:bold;">{:,}</p>
-#     </div>
-#     <div style="flex:1; background:#3498DB; padding:20px; border-radius:12px; color:white; text-align:center;">
-#         <h4>🆕 Total Tagging Terbaru</h4>
-#         <p style="font-size:22px; font-weight:bold;">{:,}</p>
-#     </div>
-#     <div style="flex:1; background:#E67E22; padding:20px; border-radius:12px; color:white; text-align:center;">
-#         <h4>📅 Total Minggu Ini</h4>
-#         <p style="font-size:22px; font-weight:bold;">{:,}</p>
-#     </div>
-# </div>
-# """.format(df['total'].sum(), total_terbaru, total_week), unsafe_allow_html=True)
-
-# st.markdown("""
-# <div style="display:flex; gap:20px;">
-#     <div style="flex:1; background:#9B59B6; padding:20px; border-radius:12px; color:white; text-align:center;">
-#         <h4>👥 Rata-rata per Pegawai</h4>
-#         <p style="font-size:22px; font-weight:bold;">{:.2f}</p>
-#     </div>
-#     <div style="flex:1; background:#1ABC9C; padding:20px; border-radius:12px; color:white; text-align:center;">
-#         <h4>🏆 Max Tagging</h4>
-#         <p style="font-size:22px; font-weight:bold;">{:,}</p>
-#     </div>
-#     <div style="flex:1; background:#E74C3C; padding:20px; border-radius:12px; color:white; text-align:center;">
-#         <h4>📉 Min Tagging</h4>
-#         <p style="font-size:22px; font-weight:bold;">{:,}</p>
-#     </div>
-# </div>
-# """.format(df['terbaru'].mean(), df['terbaru'].max(), df['terbaru'].min()), unsafe_allow_html=True)
 
 st.markdown(f"""
 <div style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:20px;">
@@ -286,7 +252,7 @@ else:
 # =========================
 # Leaderboard
 # =========================
-st.subheader("🏆 Leaderboard Pegawai")
+st.subheader(f"🏆 Leaderboard {filter_option}")
 
 # Pilihan berapa top
 top_n = st.slider("Pilih jumlah Top-N yang tampil:", 5, 77, 17)
