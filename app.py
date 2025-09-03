@@ -35,23 +35,74 @@ def load_data(file):
     df.columns = df.columns.str.strip().str.lower()
     return df
 
-# --- Sidebar Upload ---
-uploaded_file = st.sidebar.file_uploader("Upload file Excel KDM", type=["xlsx"])
+# # --- Sidebar Upload ---
+# uploaded_file = st.sidebar.file_uploader("Upload file Excel KDM", type=["xlsx"])
 
-if uploaded_file is not None:
-    df = load_data(uploaded_file)
-else:
-    try:
-        df = load_data("ProgressKDM.xlsx")
-    except Exception:
-        df = pd.DataFrame([])
+# if uploaded_file is not None:
+#     df = load_data(uploaded_file)
+# else:
+#     try:
+#         df = load_data("ProgressKDM.xlsx")
+#     except Exception:
+#         df = pd.DataFrame([])
 
-# --- Jika Data Kosong ---
-if df.empty:
-    st.warning("⚠️ Tidak ada data tersedia. Upload file Excel terlebih dahulu.")
+# # --- Jika Data Kosong ---
+# if df.empty:
+#     st.warning("⚠️ Tidak ada data tersedia. Upload file Excel terlebih dahulu.")
+#     st.stop()
+
+# # --- Sidebar Filter ---
+# filter_option = st.sidebar.radio(
+#     "Pilih Data:",
+#     ("Semua", "Pegawai", "Non Pegawai")
+# )
+
+# # --- Load Data Sesuai Filter ---
+# try:
+#     if filter_option == "Semua":
+#         df = pd.read_excel("ProgressKDM.xlsx", sheet_name="Semua")
+#     elif filter_option == "Pegawai":
+#         df = pd.read_excel("ProgressKDM.xlsx", sheet_name="Pegawai")
+#     elif filter_option == "Non Pegawai":
+#         df = pd.read_excel("ProgressKDM.xlsx", sheet_name="NonPegawai")
+# except Exception:
+#     df = pd.DataFrame([])
+
+# # Kolom lowercase
+# df.columns = [c.strip().lower() for c in df.columns]
+
+# # Pastikan kolom ada
+# required_cols = ["nama", "total", "terbaru", "perolehan minggu ini"]
+# missing_cols = [c for c in required_cols if c not in df.columns]
+# if missing_cols:
+#     st.error(f"❌ Kolom berikut tidak ada di file: {missing_cols}")
+#     st.stop()
+
+# ===================== Sidebar ===================== #
+st.sidebar.header("📂 Data")
+default_path = "ProgressKDM.xlsx"
+
+# Upload file opsional
+uploaded_file = st.sidebar.file_uploader("Upload Excel (opsional)", type=["xlsx"])
+source = uploaded_file if uploaded_file is not None else (default_path if os.path.exists(default_path) else None)
+
+if source is None:
+    st.warning(f"Letakkan file **{default_path}** di folder kerja, atau upload dari sidebar.")
     st.stop()
 
-# --- Sidebar Filter ---
+# Load data
+def load_data(file_path):
+    return pd.read_excel(file_path)
+
+try:
+    df = load_data(source)
+except Exception as e:
+    st.error(f"Gagal memuat data: {e}")
+    st.stop()
+
+# ---- Sidebar Filter ---- #
+st.sidebar.markdown("---")
+st.sidebar.subheader("📊 Pilih Data")
 filter_option = st.sidebar.radio(
     "Pilih Data:",
     ("Semua", "Pegawai", "Non Pegawai")
@@ -60,11 +111,11 @@ filter_option = st.sidebar.radio(
 # --- Load Data Sesuai Filter ---
 try:
     if filter_option == "Semua":
-        df = pd.read_excel("ProgressKDM.xlsx", sheet_name="Semua")
+        df = pd.read_excel(source, sheet_name="Semua")
     elif filter_option == "Pegawai":
-        df = pd.read_excel("ProgressKDM.xlsx", sheet_name="Pegawai")
+        df = pd.read_excel(source, sheet_name="Pegawai")
     elif filter_option == "Non Pegawai":
-        df = pd.read_excel("ProgressKDM.xlsx", sheet_name="NonPegawai")
+        df = pd.read_excel(source, sheet_name="NonPegawai")
 except Exception:
     df = pd.DataFrame([])
 
