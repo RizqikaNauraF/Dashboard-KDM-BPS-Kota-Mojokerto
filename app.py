@@ -283,11 +283,12 @@ leaderboard_display = leaderboard.rename(columns={
 })
 
 # =========================
-# Custom HTML Table
+# Custom HTML Table + Scroll
 # =========================
 html = """
+<div style="max-height:500px; overflow-y:auto; border:1px solid #ddd; border-radius:8px;">
 <table style="width:100%; border-collapse:collapse; font-size:14px;">
-  <tr style="background-color:#2E86C1; color:white; text-align:left;">
+  <tr style="background-color:#2E86C1; color:white; text-align:left; position:sticky; top:0; z-index:1;">
     <th style="padding:8px;">Rank</th>
     <th style="padding:8px;">Nama</th>
     <th style="padding:8px;">Satker</th>
@@ -310,7 +311,7 @@ for _, row in leaderboard_display.iterrows():
   </tr>
 """
 
-html += "</table>"
+html += "</table></div>"
 
 # Render ke Streamlit
 st.markdown(html, unsafe_allow_html=True)
@@ -324,12 +325,12 @@ col1, col2 = st.columns(2)
 
 
 # Data lengkap untuk export (full, tanpa top_n)
-full_leaderboard = leaderboard_full.copy()  # full data, jangan sentuh top_n
+full_leaderboard = leaderboard_full.copy() 
 
 # Terapkan urutan user
 full_leaderboard_sorted = full_leaderboard.sort_values(
-    by=sort_col,         # dari pilihan user
-    ascending=ascending  # dari pilihan user
+    by=sort_col,         
+    ascending=ascending 
 ).reset_index(drop=True)
 
 # Kasih Rank sesuai urutan user
@@ -577,10 +578,11 @@ try:
         top_n = st.slider("Pilih jumlah Top-N yang tampil:", 5, 77, 17, key="top_n_perbandingan")
         df_top = df_show.head(top_n)
 
-        # === Tabel HTML custom Top-N ===
+        # === Tabel HTML ===
         table_html = """
+<div style="max-height:500px; overflow-y:auto; border:1px solid #ddd; border-radius:8px;">
 <table style="width:100%; border-collapse:collapse; font-size:14px;">
-  <tr style="background-color:#2E86C1; color:white;">
+  <tr style="background-color:#2E86C1; color:white; position:sticky; top:0; z-index:1;">
     <th style="padding:8px;">Ranking</th>
     <th style="padding:8px;">Nama</th>
     <th style="padding:8px;">Satker</th>
@@ -609,10 +611,10 @@ try:
     <td style="padding:8px; color:{selisih_color}; text-align:right;">{val_selisih}</td>
   </tr>
 """
-        table_html += "</table>"
+        table_html += "</table></div>"
         st.markdown(table_html, unsafe_allow_html=True)
 
-        # ---- Export Data Full (sebelah-sebelahan) ----
+        # ---- Export Data Full ----
         st.subheader("⬇️ Export Perbandingan Full")
 
         # Ganti NaN dengan 0 dan hapus .0
