@@ -13,7 +13,6 @@ from reportlab.lib.styles import getSampleStyleSheet
 st.set_page_config(
     page_title="Dashboard KDM",
     page_icon="📊",
-    layout="wide",
     initial_sidebar_state="expanded"
 )
 
@@ -34,49 +33,6 @@ def load_data(file):
     df = pd.read_excel(file, engine="openpyxl")
     df.columns = df.columns.str.strip().str.lower()
     return df
-
-# # --- Sidebar Upload ---
-# uploaded_file = st.sidebar.file_uploader("Upload file Excel KDM", type=["xlsx"])
-
-# if uploaded_file is not None:
-#     df = load_data(uploaded_file)
-# else:
-#     try:
-#         df = load_data("ProgressKDM.xlsx")
-#     except Exception:
-#         df = pd.DataFrame([])
-
-# # --- Jika Data Kosong ---
-# if df.empty:
-#     st.warning("⚠️ Tidak ada data tersedia. Upload file Excel terlebih dahulu.")
-#     st.stop()
-
-# # --- Sidebar Filter ---
-# filter_option = st.sidebar.radio(
-#     "Pilih Data:",
-#     ("Semua", "Pegawai", "Non Pegawai")
-# )
-
-# # --- Load Data Sesuai Filter ---
-# try:
-#     if filter_option == "Semua":
-#         df = pd.read_excel("ProgressKDM.xlsx", sheet_name="Semua")
-#     elif filter_option == "Pegawai":
-#         df = pd.read_excel("ProgressKDM.xlsx", sheet_name="Pegawai")
-#     elif filter_option == "Non Pegawai":
-#         df = pd.read_excel("ProgressKDM.xlsx", sheet_name="NonPegawai")
-# except Exception:
-#     df = pd.DataFrame([])
-
-# # Kolom lowercase
-# df.columns = [c.strip().lower() for c in df.columns]
-
-# # Pastikan kolom ada
-# required_cols = ["nama", "total", "terbaru", "perolehan minggu ini"]
-# missing_cols = [c for c in required_cols if c not in df.columns]
-# if missing_cols:
-#     st.error(f"❌ Kolom berikut tidak ada di file: {missing_cols}")
-#     st.stop()
 
 # ===================== Sidebar ===================== #
 st.sidebar.header("📂 Data")
