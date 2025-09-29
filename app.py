@@ -25,7 +25,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.write(f"📅 Data terakhir diperbarui pada: Senin, 22 September 2025, pukul 05.00")
+st.write(f"📅 Data terakhir diperbarui pada: Senin, 29 September 2025, pukul 05.00")
 st.title("📊 Dashboard KDM BPS Kota Mojokerto - Sensus Ekonomi 2026")
 
 # --Load Data---
@@ -96,7 +96,7 @@ if "tanggal" in df.columns:
         available_dates = sorted(df["tanggal"].dt.date.unique())
 
         # DEFAULT TANGGAL
-        default_date = datetime.strptime("22/09/2025", "%d/%m/%Y").date()
+        default_date = datetime.strptime("29/09/2025", "%d/%m/%Y").date()
         if default_date not in available_dates:
             default_date = available_dates[0]
 
