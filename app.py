@@ -25,7 +25,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.write(f"📅 Data terakhir diperbarui pada: Senin, 06 Oktiber 2025, pukul 05.00")
+st.write(f"📅 Data terakhir diperbarui pada: Senin, 06 Oktober 2025, pukul 05.00")
 st.title("📊 Dashboard KDM BPS Kota Mojokerto - Sensus Ekonomi 2026")
 
 # --Load Data---
