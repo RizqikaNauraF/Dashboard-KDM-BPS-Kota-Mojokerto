@@ -17,16 +17,15 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-st.markdown("""
-<style>
-    .stApp {
-        background-color: #f5f7fa;
-    }
-</style>
-""", unsafe_allow_html=True)
+col1, col2, col3 = st.columns([5, 1, 1])
+with col2:
+    st.image("Logo BPS.png", use_container_width=False)
+with col3:
+    st.image("Logo SE 26.png", use_container_width=False)
+
 
 st.write(f"📅 Data terakhir diperbarui pada: Senin, 06 Oktober 2025, pukul 05.00")
-st.title("📊 Dashboard KDM BPS Kota Mojokerto - Sensus Ekonomi 2026")
+st.title("📊 Dashboard Perolehan Tagging KDM BPS Kota Mojokerto - Sensus Ekonomi 2026")
 
 # --Load Data---
 @st.cache_data
@@ -165,7 +164,7 @@ st.markdown(f"""
 st.markdown(f"""
 <div style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:20px;">
     <div style="flex:1 1 200px; background:#9B59B6; padding:20px; border-radius:12px; color:white; text-align:center;">
-        <h4>👥 Rata-rata per Pegawai</h4>
+        <h4>👥 Rata-rata per Individu</h4>
         <p style="font-size:22px; font-weight:bold;">{df['terbaru'].mean():.2f}</p>
     </div>
     <div style="flex:1 1 200px; background:#1ABC9C; padding:20px; border-radius:12px; color:white; text-align:center;">
